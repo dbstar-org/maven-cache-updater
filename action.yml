@@ -1,0 +1,33 @@
+name: 'Maven Cache Updater Action'
+description: 'Update Maven Repository Cache if necessary.'
+inputs:
+  cache-matched-key:
+    description: 'Key of the cache that was restored by actions/cache/restore Action.'
+outputs:
+  updated:
+    description: 'A boolean value indicate the Cache updated or not.'
+    value: ${{ steps.hash-maven.outputs.update }}
+  cache-key:
+    description: 'Key of the cache that was saved.'
+    value: ${{ steps.hash-maven.outputs.cache-key }}
+runs:
+  using: 'composite'
+  steps:
+    - name: Calculate Maven Repository Cache Key
+      id: hash-maven
+      run: |
+        cache-matched-key=${{ inputs.cache-matched-key }}
+        cache-key=${{ runner.os }}-maven-${{ hashFiles('.m2/repository/**/*.jar', '.m2/repository/**/*.pom') }}
+        echo "cache-key=$cache-key" >>$GITHUB_OUTPUT
+        if [ "$cache-matched-key" == "$cache-key" ]; then
+          echo "update=false" >>$GITHUB_OUTPUT
+        else
+          echo "update=true" >>$GITHUB_OUTPUT
+        fi
+      shell: bash
+    - name: Save Maven Repository Cache
+      if: steps.hash-maven.outputs.update == 'true1'
+      uses: actions/cache/save@v3
+      with:
+        path: ${{ github.workspace }}/.m2/repository
+        key: ${{ steps.hash-maven.outputs.cache-key }}

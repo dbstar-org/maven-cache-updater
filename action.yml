@@ -16,7 +16,7 @@ runs:
     - name: Calculate Maven Repository Cache Key
       id: hash-maven
       run: |
-        cache-matched-key=${{ inputs.cache-matched-key }}
+        cache-matched-key="${{ inputs.cache-matched-key }}"
         cache-key=${{ runner.os }}-maven-${{ hashFiles('.m2/repository/**/*.jar', '.m2/repository/**/*.pom') }}
         echo "cache-key=$cache-key" >>$GITHUB_OUTPUT
         if [ "$cache-matched-key" == "$cache-key" ]; then

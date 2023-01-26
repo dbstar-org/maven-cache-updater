@@ -18,15 +18,15 @@ runs:
       run: |
         CACHE_MATCHED_KEY=${{ inputs.cache-matched-key }}
         CACHE_KEY=${{ runner.os }}-maven-${{ hashFiles('.m2/repository/**/*.jar', '.m2/repository/**/*.pom') }}
-        echo "cache-key=$CACHE_KEY" >>$GITHUB_OUTPUT
         if [ "$CACHE_MATCHED_KEY" == "$CACHE_KEY" ]; then
           echo "update=false" >>$GITHUB_OUTPUT
         else
           echo "update=true" >>$GITHUB_OUTPUT
+          echo "cache-key=$CACHE_KEY" >>$GITHUB_OUTPUT
         fi
       shell: bash
     - name: Save Maven Repository Cache
-      if: steps.hash-maven.outputs.update == 'true1'
+      if: steps.hash-maven.outputs.update == 'true'
       uses: actions/cache/save@v3
       with:
         path: ${{ github.workspace }}/.m2/repository

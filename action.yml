@@ -16,10 +16,10 @@ runs:
     - name: Calculate Maven Repository Cache Key
       id: hash-maven
       run: |
-        cache-matched-key="${{ inputs.cache-matched-key }}"
-        cache-key=${{ runner.os }}-maven-${{ hashFiles('.m2/repository/**/*.jar', '.m2/repository/**/*.pom') }}
-        echo "cache-key=$cache-key" >>$GITHUB_OUTPUT
-        if [ "$cache-matched-key" == "$cache-key" ]; then
+        CACHE_MATCHED_KEY=${{ inputs.cache-matched-key }}
+        CACHE_KEY=${{ runner.os }}-maven-${{ hashFiles('.m2/repository/**/*.jar', '.m2/repository/**/*.pom') }}
+        echo "cache-key=$CACHE_KEY" >>$GITHUB_OUTPUT
+        if [ "$CACHE_MATCHED_KEY" == "$CACHE_KEY" ]; then
           echo "update=false" >>$GITHUB_OUTPUT
         else
           echo "update=true" >>$GITHUB_OUTPUT
